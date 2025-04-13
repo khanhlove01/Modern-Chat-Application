@@ -2,6 +2,7 @@ import { Server } from "socket.io";
 import Redis from 'ioredis'
 import { config } from 'dotenv';
 import prismaClient from "./prisma";
+import {createProducer} from './kafka'
 config(); // Load environment variables from .env
 
 const pub = new Redis({
