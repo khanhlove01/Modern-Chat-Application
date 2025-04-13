@@ -1,6 +1,7 @@
 import { Server } from "socket.io";
 import Redis from 'ioredis'
 import { config } from 'dotenv';
+import prismaClient from "./prisma";
 config(); // Load environment variables from .env
 
 const pub = new Redis({
@@ -43,9 +44,14 @@ class SocketService {
         await pub.publish("MESSAGES", JSON.stringify({ message }));
       });
     });
-    sub.on('message',(channel,message) => {
+    sub.on('message',async (channel,message) => {
         if(channel == 'MESSAGES'){
             io.emit("message",message)
+            await prismaClient.message.create({
+                data:{
+                    text: message,
+                }
+            })
         }
     })
   }
